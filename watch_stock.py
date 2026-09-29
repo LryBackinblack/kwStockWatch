@@ -19,8 +19,12 @@ import sys
 import time
 import urllib.error
 import urllib.request
-import winsound
 from datetime import datetime, timedelta
+
+try:
+    import winsound
+except ImportError:  # 非 Windows，例如 CI 的 Linux runner
+    winsound = None
 
 BASE = pathlib.Path(__file__).resolve().parent
 TOKEN_FILE = BASE / "token.txt"
@@ -165,9 +169,10 @@ def alert(snapshot):
     print(f"  库存 {snapshot['stock']} 件    售价 {snapshot['price']} 元")
     print("=" * 56)
     print()
-    for _ in range(3):
-        winsound.Beep(1000, 250)
-        time.sleep(0.12)
+    if winsound:
+        for _ in range(3):
+            winsound.Beep(1000, 250)
+            time.sleep(0.12)
 
 
 def main():

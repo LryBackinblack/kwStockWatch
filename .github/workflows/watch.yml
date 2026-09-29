@@ -1,0 +1,44 @@
+name: 库存监控
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 调度延迟可能让两次运行重叠，排队而非并发，避免状态文件互相覆盖造成重复推送
+concurrency:
+  group: stock-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 每次都是新进程，靠 cache 把 .stock_state.json 传下去，用于告警去重
+      - name: 恢复上次状态
+        uses: actions/cache@v4
+        with:
+          path: .stock_state.json
+          key: stock-state-${{ github.run_id }}
+          restore-keys: stock-state-
+
+      - name: 写入 token
+        env:
+          WX_TOKEN: ${{ secrets.WX_TOKEN }}
+        run: printf '%s\n' "$WX_TOKEN" > token.txt
+
+      - name: 检查库存
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
+        run: python ci_check.py

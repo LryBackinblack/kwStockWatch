@@ -3,5 +3,6 @@ token.txt
 
 # 运行时产物
 stock.log
+.stock_state.json
 __pycache__/
 *.pyc

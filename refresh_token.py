@@ -17,7 +17,7 @@ from datetime import datetime
 
 import watch_stock as ws
 
-DUMPS = pathlib.Path(r"C:\Users\Linre\.mitmproxy\dumps")
+DUMPS = pathlib.Path.home() / ".mitmproxy" / "dumps"
 TOKEN_RE = re.compile(r"^x-wx-token:\s*(\S+)\s*$", re.I | re.M)
 MAX_CANDIDATES = 5
 
