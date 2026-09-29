@@ -1,0 +1,7 @@
+# 密钥：切勿提交
+token.txt
+
+# 运行时产物
+stock.log
+__pycache__/
+*.pyc
