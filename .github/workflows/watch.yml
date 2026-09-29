@@ -2,7 +2,9 @@ name: 库存监控
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    # 从第 3 分钟起每 5 分钟：避开整点，GitHub 调度器在整点前后负载最高，
+    # 含 :00 的写法容易被延迟甚至整轮丢弃
+    - cron: "3/5 * * * *"
   workflow_dispatch:
 
 permissions:
